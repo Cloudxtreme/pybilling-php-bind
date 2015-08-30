@@ -12,11 +12,7 @@ class Resource extends ParametersWrapper {
             throw new InvalidArgumentException('id');
         }
 
-        return self::internalFromArray(self::makeRequest(\Httpful\Http::GET, "/{resource}/$id/"));
-    }
-
-    protected static function internalFromArray($resource_data = array()) {
-        return Resource::fromArray($resource_data);
+        return self::fromArray(self::makeRequest(\Httpful\Http::GET, "/{resource}/$id/"));
     }
 
     public static function makeRequest($method, $uri, $many = false, $payload = array()) {
@@ -29,6 +25,8 @@ class Resource extends ParametersWrapper {
         }
 
         $uri = str_replace('{resource}', self::getResourceName(), $uri);
+
+        print "$uri\n";
 
         $request = \Httpful\Request::init($method)
             ->uri(self::API_URL . $uri)
@@ -45,12 +43,16 @@ class Resource extends ParametersWrapper {
             $request = $request->body($payload);
         }
 
+        print "$method $request->uri\n";
+
         $response = $request->send();
 
         if ($response->code >= 500) {
             throw new Exception("{$response->code}: Internal server error");
         } else if ($response->code >= 400) {
-            throw new Exception("{$response->code}: {$response->body->detail}");
+            $details = is_object($response->body) ? $response->body->detail : 'Check server logs.';
+
+            throw new Exception("{$response->code}: {$details}", $response->code);
         }
 
         if ($many) {
@@ -70,7 +72,13 @@ class Resource extends ParametersWrapper {
      * @return string Rource name for the API calls.
      */
     private static function getResourceName() {
-        return basename(__FILE__, '.php');
+        $call_class = get_called_class();
+
+        if ($call_class == 'Resource') {
+            return 'resources';
+        }
+
+        return $call_class::getResourceName();
     }
 
     public static function filter($query = array()) {

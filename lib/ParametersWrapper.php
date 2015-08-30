@@ -155,7 +155,7 @@ class ParametersWrapper {
         return $this->dataArray;
     }
 
-    public static function upperFirst($str) {
+    private static function upperFirst($str) {
         $str = strtolower($str);
         $str{0} = strtoupper($str{0});
 
