@@ -10,6 +10,9 @@
  */
 
 require_once 'resource.php';
+require_once 'accounts.php';
+require_once 'contacts.php';
+require_once 'pdata.php';
 
 class Account extends Resource {
     public static function getResourceName() {

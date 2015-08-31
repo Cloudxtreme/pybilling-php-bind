@@ -11,6 +11,8 @@
 
 require_once 'resource.php';
 
-class Contact extends Resource {
-
+class AccountContact extends Resource {
+    public static function getResourceName() {
+        return 'contacts';
+    }
 }

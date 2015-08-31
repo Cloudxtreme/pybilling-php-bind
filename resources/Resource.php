@@ -50,7 +50,7 @@ class Resource extends ParametersWrapper {
         if ($response->code >= 500) {
             throw new Exception("{$response->code}: Internal server error");
         } else if ($response->code >= 400) {
-            $details = is_object($response->body) ? $response->body->detail : 'Check server logs.';
+            $details = is_object($response->body) ? print_r($response->body, true) : 'Check server logs.';
 
             throw new Exception("{$response->code}: {$details}", $response->code);
         }
@@ -133,7 +133,7 @@ class Resource extends ParametersWrapper {
             }
 
             if (!empty($payload)) {
-                $this->setData(self::makeRequest(\Httpful\Http::PUT, "/{resource}/$this->id/", false, $payload));
+                $this->setData(self::makeRequest(\Httpful\Http::PATCH, "/{resource}/$this->id/", false, $payload));
             }
         } else {
             $this->setData(self::makeRequest(\Httpful\Http::POST, "/{resource}/", false, $this->getAsMap()));
