@@ -1,5 +1,7 @@
 <?php
 
+namespace pybilling;
+
 /**
  * Объект, враппер над параметрами.
  * Превращает любой ассоциативный массив в объект со свойствами.
@@ -22,7 +24,7 @@ class ParametersWrapper {
 
     public static function fromArray($dataArray) {
         if (!is_array($dataArray)) {
-            throw new InvalidArgumentException('dataArray');
+            throw new \InvalidArgumentException('dataArray');
         }
 
         $parametersClass = get_called_class();
@@ -35,7 +37,7 @@ class ParametersWrapper {
 
     public function setData(array $dataArray = array()) {
         if (!$this->isStringKeyedOrEmpty($dataArray)) {
-            throw new InvalidArgumentException('dataArray.assoc');
+            throw new \InvalidArgumentException('dataArray.assoc');
         }
 
         $this->dataArray = $dataArray;
@@ -62,7 +64,7 @@ class ParametersWrapper {
 
     public function __get($name) {
         if (empty($name) || is_numeric($name)) {
-            throw new InvalidArgumentException('name');
+            throw new \InvalidArgumentException('name');
         }
 
         $getterName = 'get' . self::upperFirst($name);
@@ -71,7 +73,7 @@ class ParametersWrapper {
         }
 
         if (!isset($this->dataArray[$name])) {
-            throw new OutOfRangeException("name: $name");
+            throw new \OutOfRangeException("name: $name");
         }
 
         return $this->internalGet($name);
@@ -79,7 +81,7 @@ class ParametersWrapper {
 
     public function __set($name, $value) {
         if (empty($name) || is_numeric($name)) {
-            throw new InvalidArgumentException('name');
+            throw new \InvalidArgumentException('name');
         }
 
         $setterName = 'set' . self::upperFirst($name);
@@ -92,7 +94,7 @@ class ParametersWrapper {
 
     protected function internalGet($name) {
         if (empty($name) || is_numeric($name)) {
-            throw new InvalidArgumentException('name');
+            throw new \InvalidArgumentException('name');
         }
 
         return $this->dataArray[$name];
@@ -100,7 +102,7 @@ class ParametersWrapper {
 
     protected function internalSet($name, $value) {
         if (empty($name) || is_numeric($name)) {
-            throw new InvalidArgumentException('name');
+            throw new \InvalidArgumentException('name');
         }
 
         if (isset($this->dataArray[$name])) {
@@ -116,7 +118,7 @@ class ParametersWrapper {
 
     public function __isset($name) {
         if (empty($name) || is_numeric($name)) {
-            throw new InvalidArgumentException('name');
+            throw new \InvalidArgumentException('name');
         }
 
         return isset($this->dataArray[$name]);

@@ -8,4 +8,9 @@
  * Project: prod
  */
 
-require_once dirname(__FILE__) . '/resources/Resource.php';
+namespace pybilling;
+
+require_once dirname(__FILE__) . '/resources/resource.php';
+require_once dirname(__FILE__) . '/resources/accounts.php';
+require_once dirname(__FILE__) . '/resources/contacts.php';
+require_once dirname(__FILE__) . '/resources/pdata.php';

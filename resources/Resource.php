@@ -1,15 +1,17 @@
 <?php
 
+namespace pybilling;
+
 require_once(dirname(dirname(__FILE__)) . '/lib/ParametersWrapper.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/Httpful/Bootstrap.php');
 
 class Resource extends ParametersWrapper {
-    const API_URL = 'http://127.0.0.1:8000/v1';
+    const API_URL = 'http://127.0.0.1:8018/v1';
     const API_KEY = 'sdkjflskdfsdflsjd';
 
     public static function get($id) {
         if ($id <= 0) {
-            throw new InvalidArgumentException('id');
+            throw new \InvalidArgumentException('id');
         }
 
         return self::fromArray(self::makeRequest(\Httpful\Http::GET, "/{resource}/$id/"));
@@ -17,16 +19,14 @@ class Resource extends ParametersWrapper {
 
     public static function makeRequest($method, $uri, $many = false, $payload = array()) {
         if (empty($method)) {
-            throw new InvalidArgumentException('method');
+            throw new \InvalidArgumentException('method');
         }
 
         if (empty($uri)) {
-            throw new InvalidArgumentException('uri');
+            throw new \InvalidArgumentException('uri');
         }
 
         $uri = str_replace('{resource}', self::getResourceName(), $uri);
-
-        print "$uri\n";
 
         $request = \Httpful\Request::init($method)
             ->uri(self::API_URL . $uri)
@@ -43,16 +43,17 @@ class Resource extends ParametersWrapper {
             $request = $request->body($payload);
         }
 
-        print "$method $request->uri\n";
-
         $response = $request->send();
 
         if ($response->code >= 500) {
-            throw new Exception("{$response->code}: Internal server error");
+
+            print_r($response);
+
+            throw new \Exception("{$response->code}: Internal server error");
         } else if ($response->code >= 400) {
             $details = is_object($response->body) ? print_r($response->body, true) : 'Check server logs.';
 
-            throw new Exception("{$response->code}: {$details}", $response->code);
+            throw new \Exception("{$response->code}: {$details}", $response->code);
         }
 
         if ($many) {

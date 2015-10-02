@@ -1,5 +1,7 @@
 <?php
 
+namespace pybilling;
+
 /**
  * Created by PhpStorm.
  * User: dmitry
