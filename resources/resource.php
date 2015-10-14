@@ -2,9 +2,6 @@
 
 namespace pybilling;
 
-require_once(dirname(dirname(__FILE__)) . '/lib/ParametersWrapper.php');
-require_once(dirname(dirname(__FILE__)) . '/lib/Httpful/Bootstrap.php');
-
 class Resource extends ParametersWrapper {
     const API_URL = 'http://127.0.0.1:8018/v1';
     const API_KEY = 'sdkjflskdfsdflsjd';

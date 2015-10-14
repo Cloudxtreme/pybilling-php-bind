@@ -10,6 +10,9 @@
 
 namespace pybilling;
 
+require_once(dirname(__FILE__) . '/lib/ParametersWrapper.php');
+require_once(dirname(__FILE__) . '/lib/Httpful/Bootstrap.php');
+
 require_once dirname(__FILE__) . '/resources/resource.php';
 require_once dirname(__FILE__) . '/resources/accounts.php';
 require_once dirname(__FILE__) . '/resources/contacts.php';
