@@ -91,6 +91,10 @@ class Resource extends ParametersWrapper {
         return $resources;
     }
 
+    protected static function internalFromArray($resource_data = array()) {
+        return Resource::fromArray($resource_data);
+    }
+
     public function delete() {
         self::makeRequest(\Httpful\Http::DELETE, "/{resource}/$this->id/");
     }

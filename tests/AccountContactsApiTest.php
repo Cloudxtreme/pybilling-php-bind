@@ -17,13 +17,13 @@ class AccountContactsApiTest extends PHPUnit_Framework_TestCase {
 
     public function test_accounts_manage() {
         // Create user
-        $account = new Account(array(
+        $account = new pybilling\Account(array(
             'name' => 'Dmitry'
         ));
         $account->save();
 
         # Create
-        $aContact = new AccountContact(array(
+        $aContact = new pybilling\AccountContact(array(
             'name' => 'home',
             'address' => 'dmitry@shyliaev.com',
             'type' => 'email',
@@ -42,7 +42,7 @@ class AccountContactsApiTest extends PHPUnit_Framework_TestCase {
 
         $aContact->save();
 
-        $aContact_upd = AccountContact::get($aContact->id);
+        $aContact_upd = pybilling\AccountContact::get($aContact->id);
         $this->assertEquals($aContact->id, $aContact_upd->id);
         $this->assertEquals('work', $aContact_upd->name);
         $this->assertEquals('email', $aContact_upd->type);
@@ -53,7 +53,7 @@ class AccountContactsApiTest extends PHPUnit_Framework_TestCase {
         $aContact_upd->delete();
 
         try {
-            AccountContact::get($aContact_upd->id);
+            pybilling\AccountContact::get($aContact_upd->id);
             $this->fail("Waiting for the exception.");
         }
         catch(Exception $ex) {

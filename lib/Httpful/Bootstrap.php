@@ -2,28 +2,31 @@
 
 namespace Httpful;
 
-function require_once_recursive($rootDir) {
-    $hDir = opendir($rootDir);
-    if ($hDir === false) {
-        throw new InvalidArgumentException('rootDir');
-    }
-
-    while (($file = readdir($hDir)) !== false) {
-        if (in_array($file, array('.', '..'))) {
-            continue;
+if (!function_exists('require_once_recursive')) {
+    function require_once_recursive($rootDir) {
+        $hDir = opendir($rootDir);
+        if ($hDir === false) {
+            throw new InvalidArgumentException('rootDir');
         }
 
-        $filePath = "$rootDir/$file";
+        while (($file = readdir($hDir)) !== false) {
+            if (in_array($file, array('.', '..'))) {
+                continue;
+            }
 
-        if (strrpos($file, '.php') === strlen($file) - strlen('.php')) {
-            require_once($filePath);
-        } else if (is_dir($filePath)) {
-            require_once_recursive($filePath);
+            $filePath = "$rootDir/$file";
+            $endsWith = strrpos($file, '.php') === strlen($file) - strlen('.php');
+
+            if ($endsWith) {
+                require_once $filePath;
+            } else if (is_dir($filePath)) {
+                require_once_recursive($filePath);
+            }
         }
-    }
 
-    if ($hDir) {
-        closedir($hDir);
+        if ($hDir) {
+            closedir($hDir);
+        }
     }
 }
 

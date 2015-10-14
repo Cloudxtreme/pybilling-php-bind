@@ -14,25 +14,25 @@ class AccountsApiTest extends PHPUnit_Framework_TestCase {
     }
 
     public function test_accounts_create_defined_id() {
-        $account = new Account(array(
+        $account = new pybilling\Account(array(
             'name' => 'Dmitry',
             'pk' => 150
         ));
 
         $account->save();
-        $account = Account::get(150);
+        $account = pybilling\Account::get(150);
 
         $this->assertEquals($account->id, 150);
     }
 
     public function test_accounts_with_contacts_and_personal_data() {
-        $account = new Account(array(
+        $account = new pybilling\Account(array(
             'name' => 'Dmitry',
         ));
         $account->save();
 
         # Create
-        $personal_data = new PersonalData(array(
+        $personal_data = new pybilling\PersonalData(array(
             'fio' => "Zbignev Bj Жезинский",
             'birth' => '1983-09-05',
             'postal_index' => 610001,
@@ -46,7 +46,7 @@ class AccountsApiTest extends PHPUnit_Framework_TestCase {
         $personal_data->save();
 
 
-        $aContact = new AccountContact(array(
+        $aContact = new pybilling\AccountContact(array(
             'name' => 'home',
             'address' => 'dmitry@shyliaev.com',
             'type' => 'email',
@@ -56,7 +56,7 @@ class AccountsApiTest extends PHPUnit_Framework_TestCase {
 
 
         //  Checks
-        $updated_account = Account::get($account->id);
+        $updated_account = pybilling\Account::get($account->id);
         $this->assertEquals(1, count($updated_account->contacts));
         $this->assertEquals(1, count($updated_account->personal_data));
 
@@ -79,7 +79,7 @@ class AccountsApiTest extends PHPUnit_Framework_TestCase {
 
     public function test_accounts_manage() {
         // Create user
-        $account = new Account(array(
+        $account = new pybilling\Account(array(
             'name' => 'Dmitry'
         ));
 
@@ -89,28 +89,28 @@ class AccountsApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('Dmitry', $account->name);
         $this->assertEquals(0, $account->balance);
         $this->assertEquals(0, $account->bonus_balance);
-        $this->assertEquals('ru', $account->language);
+        $this->assertEquals('RU', $account->language);
 
         // Update user
         $account->name = 'Dmitry Shilyaev';
-        $account->language = 'en';
+        $account->language = 'EN';
         $account->balance = 100;
         $account->bonus_balance = 200;
         $account->save();
 
         // User details
-        $account_upd = Account::get($account->id);
+        $account_upd = pybilling\Account::get($account->id);
         $this->assertEquals($account->id, $account_upd->id);
         $this->assertEquals('Dmitry Shilyaev', $account_upd->name);
         $this->assertEquals(0, $account_upd->balance);
         $this->assertEquals(0, $account_upd->bonus_balance);
-        $this->assertEquals('en', $account_upd->language);
+        $this->assertEquals('EN', $account_upd->language);
 
         // Delete user
         $account_upd->delete();
 
         try {
-            $account_upd = Account::get($account_upd->id);
+            $account_upd = pybilling\Account::get($account_upd->id);
             $this->fail("Waiting for the exception.");
         } catch (Exception $ex) {
             $this->assertEquals(404, $ex->getCode());
