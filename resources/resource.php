@@ -1,9 +1,12 @@
 <?php
 
-namespace pybilling;
+namespace pytin;
 
-class Resource extends ParametersWrapper {
-    const API_URL = 'http://127.0.0.1:8018/v1';
+require_once(dirname(dirname(__FILE__)) . '/lib/ParametersWrapper.php');
+require_once(dirname(dirname(__FILE__)) . '/lib/Httpful/Bootstrap.php');
+
+class Resource extends \ParametersWrapper {
+    const API_URL = 'http://127.0.0.1:8080/v1';
     const API_KEY = 'sdkjflskdfsdflsjd';
 
     public static function get($id) {
@@ -31,21 +34,20 @@ class Resource extends ParametersWrapper {
             ->addHeader('Accept', 'application/json')
             ->sendsJson();
 
-        if ($method == \Httpful\Http::GET) {
-            $query_str = http_build_query($payload, null, '&');
-            $query_str = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $query_str);
+        if (!empty($payload)) {
+            if ($method == \Httpful\Http::GET) {
+                $query_str = http_build_query($payload, null, '&');
+                $query_str = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $query_str);
 
-            $request = $request->uri($request->uri . '?' . $query_str);
-        } else if (!empty($payload)) {
-            $request = $request->body($payload);
+                $request = $request->uri($request->uri . '?' . $query_str);
+            } else if (!empty($payload)) {
+                $request = $request->body($payload);
+            }
         }
 
         $response = $request->send();
 
         if ($response->code >= 500) {
-
-            print_r($response);
-
             throw new \Exception("{$response->code}: Internal server error");
         } else if ($response->code >= 400) {
             $details = is_object($response->body) ? print_r($response->body, true) : 'Check server logs.';
@@ -59,6 +61,14 @@ class Resource extends ParametersWrapper {
                 $resources[] = (array)$json_res;
             }
 
+            if (isset($response->body->next)) {
+                $next_url = $response->body->next;
+                if ($next_url) {
+                    $next_url = substr($next_url, strlen(self::API_URL));
+                    $resources = array_merge($resources, self::makeRequest($method, $next_url, $many));
+                }
+            }
+
             return $resources;
         } else {
             return (array)$response->body;
@@ -70,13 +80,7 @@ class Resource extends ParametersWrapper {
      * @return string Rource name for the API calls.
      */
     private static function getResourceName() {
-        $call_class = get_called_class();
-
-        if ($call_class == 'Resource') {
-            return 'resources';
-        }
-
-        return $call_class::getResourceName();
+        return 'resources';
     }
 
     public static function filter($query = array()) {
