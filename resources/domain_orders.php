@@ -13,8 +13,8 @@ namespace pybilling;
 
 require_once 'resource.php';
 
-class Account extends Resource {
+class DomainOrder extends Resource {
     public static function getResourceName() {
-        return 'accounts';
+        return 'domain_orders';
     }
 }
